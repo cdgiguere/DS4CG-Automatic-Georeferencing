@@ -6,3 +6,4 @@ GDAL==3.3.1
 osgeo==0.0.1
 PyYAML==5.4.1
 skimage==0.0
+rasterio==1.2.4

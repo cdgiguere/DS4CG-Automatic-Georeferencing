@@ -1,5 +1,5 @@
 # DS4CG-Automatic-Georeferencing
-To get a better understanding of this project before using it, please watch this short video: and/or read this short paper: . This project was created by Collin Giguere and Sowmya Vasuki Jallepalli for the Data Science for the Common Good program in Summer 2021 in partnership with UMass Libraries and Department of Environmental Conservation and advising from Pixel Forensics. To find out more about the program, see ds.cs.umass.edu/ds4cg.
+To get a better understanding of this project before using it, please watch this short video: and/or read this short paper: . This project was created by Collin Giguere and Sowmya Vasuki Jallepalli for the Data Science for the Common Good program in Summer 2021 in partnership with UMass Libraries and Department of Environmental Conservation and advising from Pixel Forensics. To find out more about the program, see https://www.ds.cs.umass.edu/ds4cg.
 
 ## Setup
 Before using the application, you must set up the environment. First install python on your device by following the steps here: https://www.python.org/downloads/. Make sure you download and install **Python 3.9**. Then install GIT from here: https://git-scm.com/downloads.

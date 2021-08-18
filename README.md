@@ -17,9 +17,9 @@ Next, open the terminal (on MacOS) or Command Prompt (on Windows), navigate to t
 
 `.\env\Scripts\activate`
 ##### On 32-bit systems:
-`py -m pip install Setup\requirements_32.txt`
+`py -m pip install -r Setup\requirements_32.txt`
 ##### On 64-bit systems:
-`py -m pip install Setup\requirements_64.txt`
+`py -m pip install -r Setup\requirements_64.txt`
 
 ### MacOS/UNIX
 

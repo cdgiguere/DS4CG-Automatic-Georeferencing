@@ -8,9 +8,13 @@ Next, open the terminal (on MacOS) or Command Prompt (on Windows), navigate to t
 
 ### Windows
 `git clone https://github.com/cdgiguere/DS4CG-Automatic-Georeferencing.git`
+
 `py -m pip install --upgrade pip`
+
 `py -m pip install --user virtualenv`
+
 `py -m venv env`
+
 `.\env\Scripts\activate`
 ##### On 32-bit systems:
 `py -m pip install Setup\requirements_32.txt`

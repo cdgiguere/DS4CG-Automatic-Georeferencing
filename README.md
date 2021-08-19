@@ -50,7 +50,7 @@ This setup and congifuration only needs to be done one per device. All you need 
 ### Windows
 `cd Propagation\`
 
-`py Propagate.py cni3h80 cni3h79 cni3h82 ...`
+`py Propagate.py cni3h80 cni3h81 cni3h82 ...`
 
 or
 
@@ -61,15 +61,15 @@ or
 ### MacOS/UNIX
 `cd Propagation/`
 
-`python3 Propagate.py cni3h80 cni3h79 cni3h82 ...`
+`python3 Propagate.py cni3h80 cni3h81 cni3h82 ...`
 
 or
 
 `cd Satellite/`
 
-`python3 Satellite.py cni3h79`
+`python3 Satellite.py cni3h81`
 
-In these examples cni3h80 is treated as the referenced file and cni3h79 and cni3h82 are treated as the unreferenced files.
+In these examples cni3h80 is treated as the referenced file and cni3h81 and cni3h82 are treated as the unreferenced files.
 
 #### Note
 If you are using this application for its orignial developed purpose: the MacConnell set; you can just use the image codes like above as long as the config file is defined correctly. If you are working on another dataset, first fill out the config accordingly and then you will specify the file paths such as:

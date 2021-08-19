@@ -50,28 +50,30 @@ This setup and congifuration only needs to be done one per device. All you need 
 ### Windows
 `cd Propagation\`
 
-`py Propagate.py path\to\referenced_image\ path\to\unreferenced_image\ path\to\unreferenced_image\ ...`
+`py Propagate.py cni3h80 cni3h79 cni3h82 ...`
 
 or
 
 `cd Satellite\`
 
-`py Satellite.py path\to\unreferenced_image\`
+`py Satellite.py cni3h79`
 
 ### MacOS/UNIX
 `cd Propagation/`
 
-`python3 Propagate.py path/to/referenced_image/ path/to/unreferenced_image/ path/to/unreferenced_image/ ...`
+`python3 Propagate.py cni3h80 cni3h79 cni3h82 ...`
 
 or
 
 `cd Satellite/`
 
-`python3 Satellite.py path/to/unreferenced_image/`
+`python3 Satellite.py cni3h79`
 
-#### MacConnell Set
-If you are using this application for its orignial developed purpose: the MacConnell set; you can replace the paths with just the image codes as long as the config is defined correctly. An example command (on Windows) would be:
+In these examples cni3h80 is treated as the referenced file and cni3h79 and cni3h82 are treated as the unreferenced files.
 
-`py Propagate.py cni3h80 cni3h79 cni3h82`
+#### Note
+If you are using this application for its orignial developed purpose: the MacConnell set; you can just use the image codes like above as long as the config file is defined correctly. If you are working on another dataset, first fill out the config accordingly and then you will specify the file paths such as:
 
-Note: the Propagation pipeline will work with any referenced TIFF file and unreferenced TIFF files if they are overlapping, but the Satellite pipeline is not currently available for anything but the MacConnell set since more information is needed about the location and size of the unreferenced image.
+`py Propagate.py path\to\referenced_image path\to\unreferenced_image path\to\unreferenced_image ...`
+
+Note: The Satellite pipeline is not currently available for anything but the MacConnell set since more information is needed about the location and size of the unreferenced image.

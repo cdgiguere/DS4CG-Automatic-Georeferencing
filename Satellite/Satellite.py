@@ -11,9 +11,14 @@ import pandas as pd
 from zipfile import ZipFile
 import wget
 
+
 if __name__ == '__main__':
     logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
     macCoords = pd.read_csv('Data/MacConnellCoords.csv')
+
+    # get command line arguments
+    code = sys.argv[1]
+
     # Set spatial reference:
     sr = osr.SpatialReference()
     sr.ImportFromEPSG(26986)
@@ -31,7 +36,6 @@ if __name__ == '__main__':
     inp = mac['INPUT']
     out = mac['OUTPUT']
 
-    code = inp['REF_CODE']
     macPath = inp['MAC_PATH']
     satPath = inp['SAT_PATH']
     initials = inp['INITIALS']
@@ -77,8 +81,8 @@ if __name__ == '__main__':
         df = pd.read_csv('Data/Mapping.csv')
         tiles = df.loc[df['MacFile'] == orig_fn_no_path] \
             [['Tile1', 'Tile2', 'Tile3', 'Tile4', 'Tile5', 'Tile6', 'Tile7', 'Tile8', 'Tile9']]
-        tiles = [os.path.join(satPath, os.path.join(tile.split('\\')[-2], tile.split('\\')[-1])) for tile in
-                 list(tiles.values[0])]
+        tiles = [os.path.join(satPath, os.path.join(os.path.split(os.path.split(tile)[0])[1], os.path.split(tile)[1]))
+                 for tile in list(tiles.values[0])]
 
     else:
         # Downloading the Satellite tiles on the fly
@@ -146,7 +150,6 @@ if __name__ == '__main__':
 
         total, n = 0, 0
         for q, tile in enumerate(tiles):
-
             if tile is not None:
                 logging.info(f'Started tile {q + 1}...')
                 # get corresponding quadrant

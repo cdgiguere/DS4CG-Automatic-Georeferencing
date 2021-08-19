@@ -5,10 +5,6 @@ MACCONNELL:
   # and fill out 'OTHER'. Only one of 'MACCONNELL' or 'OTHER' needs to be filled out correctly.
   USE: True
   INPUT:
-    # This is the image code dpb6h109, cni1h111, etc. of the MANUALLY georeferenced image.
-    REF_CODE: cni3h80
-    # The MacConnell images that overlap this image that you wish to georeference.
-    OVERLAPPING_CODES: cni3h81
     # The folder containing referenced MacConnell images.
     REF_PATH: D:/MacConnell/Photos_Georeferenced_Samples/
     # The folder containing un-referenced MacConnell images.
@@ -17,6 +13,8 @@ MACCONNELL:
     INITIALS: CG
     # The maximum number of potential GCPs you would like to see for each image.
     MAX_GCPS: 25
+    # If True, shows a graphic with the referenced image side by side to the unreferenced with each GCP shown.
+    SHOW_MATCHES: True
 
   OUTPUT:
     # The location to save the GCP txt file to.
@@ -27,16 +25,14 @@ MACCONNELL:
 
 OTHER:
   INPUT:
-    # The path to the referenced source image.
-    REF_PATH: D:/MacConnell/Photos_Georeferenced_Samples/mufs190-1952-cni3h80-i001.reference.tif
-    # The path to the un-referenced overlapping images.
-    UNREF_PATHS: D:/MacConnell/Photos_Original/b005/mufs190-1952-cni3h81-i001-001.tif
     # The maximum number of potential GCPs you would like to see for each image.
     MAX_GCPS: 25
     # The DPI of the unreferenced images. Needed to write the GCP text file in correct units.
     DPI: 600
     # The EPSG code that the resulting georeferenced image will be in.
     EPSG: 26986
+    # If True, shows a graphic with the referenced image side by side to the unreferenced with each GCP shown.
+    SHOW_MATCHES: True
 
     # ALGORITHM PARAMETERS
 

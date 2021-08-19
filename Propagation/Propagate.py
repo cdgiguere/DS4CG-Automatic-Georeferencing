@@ -21,17 +21,22 @@ if __name__ == '__main__':
     # read config and set parameters
     filenames = []
     refFn = None
+
+    # get command line arguments
+    refCode = sys.argv[1]
+    ovCodes = sys.argv[2:]
+
     mac = helper.read_yaml('config.yaml')['MACCONNELL']
     if mac['USE'] is True:
+        logging.info('Using config for MacConnell dataset.')
         inp = mac['INPUT']
         out = mac['OUTPUT']
 
-        refCode = inp['REF_CODE']
-        ovCodes = [code.strip() for code in inp['OVERLAPPING_CODES'].split(',')]
         unrefPath = inp['UNREF_PATH']
         refPath = inp['REF_PATH']
         initials = inp['INITIALS']
         maxGCPs = inp['MAX_GCPS']
+        showMatches = inp['SHOW_MATCHES']
         GCPOut = out['GCP_OUTPUT_LOC']
         refOut = out['REF_OUTPUT_LOC']
         x_scaled = 600
@@ -41,6 +46,7 @@ if __name__ == '__main__':
         blockSize = 2
         sobK = 3
         harK = 0.04
+        targetEPSG = '26986'
         # set spatial reference
         sr.ImportFromEPSG(26986)
         logging.info('Spatial reference set to EPSG:26986.')
@@ -93,14 +99,16 @@ if __name__ == '__main__':
             logging.info(f'Found referenced image {refFn}.')
 
     else:
+        logging.info('Using config for other (not MacConnell) dataset.')
         inp = helper.read_yaml('config.yaml')['OTHER']['INPUT']
         out = helper.read_yaml('config.yaml')['OTHER']['OUTPUT']
         x_scaled = inp['X_SCALE']
         y_scaled = inp['Y_SCALE']
+        showMatches = inp['SHOW_MATCHES']
         # set spatial reference
-        sr.ImportFromEPSG(inp['EPSG'])
+        targetEPSG = inp['EPSG']
+        sr.ImportFromEPSG(targetEPSG)
         logging.info(f'Spatial reference set to EPSG:{inp["EPSG"]}.')
-        refFn = inp['REF_PATH']
         maxGCPs = inp['MAX_GCPS']
         DPI = inp['DPI']
         ransacThresh = inp['RANSAC_THRESHOLD']
@@ -109,15 +117,17 @@ if __name__ == '__main__':
         harK = inp['HARRIS_K']
         GCPOut = out['GCP_OUTPUT_LOC']
         refOut = out['REF_OUTPUT_LOC']
+        refFn = refCode
 
-        for path in [path.strip() for path in inp['UNREF_PATHS'].split(',')]:
-            GCP_fname = os.path.join(GCPOut, f'{path.split("/")[-1][:-4]}_GCPs_{date.today().strftime("%Y%m%d")}.txt')
+        for path in ovCodes:
+            GCP_fname = os.path.join(GCPOut,
+                                     f'{os.path.split(path)[1][:-4]}_GCPs_{date.today().strftime("%Y%m%d")}.txt')
             if os.path.exists(GCP_fname):
                 logging.warning(f'{GCP_fname} already exists...Overwriting.')
             else:
                 logging.info(f'{GCP_fname} created.')
 
-            output_fn_temp = os.path.join(refOut, f'{path.split("/")[-1][:-4]}.reference.tif')
+            output_fn_temp = os.path.join(refOut, f'{os.path.split(path)[1][:-4]}_temp.reference.tif')
             if os.path.exists(output_fn_temp.replace('_temp', '')):
                 logging.warning(f'{output_fn_temp.replace("_temp", "")} already exists...Overwriting.')
 
@@ -195,13 +205,19 @@ if __name__ == '__main__':
             # write all the selected matches and apply them to the unreferenced image
             gcps = []
             logging.info(f'Writing GCPs to {GCP_fname} and applying them to {output_fn_temp.replace("_temp", "")}...')
+            refGD = gdal.Open(refFn)
             for i in range(len(distributed_matches)):
                 # scaling the pixel coordinates back to original sizes
                 scaled_src = [k / j for k, j in zip(src_pts[i][0], ref_resize)]
                 scaled_dst = [k / j for k, j in zip(dst_pts[i][0], ovMac_resize)]
 
                 # converting the pixel to coordinates in corresponding systems
-                CRSXRef, CRSYRef = helper.pixel2coord(gdal.Open(refFn), scaled_src[0], scaled_src[1])
+                CRSXRef, CRSYRef = helper.pixel2coord(refGD, scaled_src[0], scaled_src[1])
+
+                if osr.SpatialReference(wkt=refGD.GetProjection()).GetAttrValue('AUTHORITY', 1) is None:
+                    logging.error(f'CRS from referenced image {refFn} could not be found. GCPs cannot be found from an '
+                                  f'image with no available CRS.')
+                    sys.exit(1)
 
                 # add the GCP
                 gcps.append(gdal.GCP(CRSXRef, CRSYRef, 0, int(scaled_dst[0]), int(scaled_dst[1])))
@@ -214,8 +230,9 @@ if __name__ == '__main__':
                 f.write(f'{ovX}\t{ovY}\t{np.round(CRSXRef, 8)}\t{np.round(CRSYRef, 8)}\n')
             logging.debug('All GCPs written and applied.')
 
-            img3 = cv2.drawMatches(ref, keypointsRef, ovMac, keypointsOvMac, distributed_matches, None, flags=2)
-            plt.imshow(img3, 'gray'), plt.show()
+            if showMatches:
+                img3 = cv2.drawMatches(ref, keypointsRef, ovMac, keypointsOvMac, distributed_matches, None, flags=2)
+                plt.imshow(img3, 'gray'), plt.show()
 
         # apply the GCPs to the open output file
         output_fn = output_fn_temp.replace('_temp', '')
@@ -226,4 +243,4 @@ if __name__ == '__main__':
         gdal.Warp(output_fn, ds, options=gdal.WarpOptions(polynomialOrder=2, srcSRS=srs, dstSRS=srs))
         ds = None
         os.remove(output_fn_temp)
-        logging.info('Completed!')
+        logging.info(f'Completed {output_fn}!')

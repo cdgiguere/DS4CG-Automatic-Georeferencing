@@ -1,7 +1,5 @@
 # This application is currently only set up to work with the MacConnell set specifically.
 INPUT:
-  # This is the image code of the MacConell Image.
-  REF_CODE: cni5h153
   # The path to un-referenced MacConnell images.
   MAC_PATH: D:/MacConnell/Photos_Original/
   # The path to satellite images. Assumed to be in 18TXM930575/18TXM930575.jp2 format.

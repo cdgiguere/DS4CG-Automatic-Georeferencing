@@ -30,6 +30,7 @@ Included with each of the two pipelines is a config yaml file. These are used to
 
 ## Use
 Now that the setup has been completed and the configurations have been set, all you need to do to run the application is navigate to the directory of the desired pipeline (.../DS4CG-Automatic-Georeferencing/Propagation/ or .../DS4CG-Automatic-Georeferencing/Satellite/) and run
+
 Just activate the already installed environment using the following command
 `.\env\Scripts\activate`
 

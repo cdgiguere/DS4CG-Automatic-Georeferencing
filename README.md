@@ -27,7 +27,7 @@ Next, open the terminal (on MacOS) or Command Prompt (on Windows), navigate to t
 Included with each of the two pipelines is a config yaml file. These are used to specify where files are located, where to place output files, and certain other parameters to use. Instructions on how to fill out these files are in the files themselves; simply open them with any text editor.
 
 ## Use
-Now that the setup has been completed and the cofigurations have been set, all you need to do to run the application is navigate to the directory of the desired pipeline (.../DS4CG-Automatic-Georeferencing/Propagation/ or .../DS4CG-Automatic-Georeferencing/Satellite/) and run
+Now that the setup has been completed and the configurations have been set, all you need to do to run the application is navigate to the directory of the desired pipeline (.../DS4CG-Automatic-Georeferencing/Propagation/ or .../DS4CG-Automatic-Georeferencing/Satellite/) and run
 
 ### Windows
 `py Propagate.py`

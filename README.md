@@ -13,6 +13,8 @@ Next, open the terminal (on MacOS) or Command Prompt (on Windows), navigate to t
 
 `py -m pip install --user virtualenv`
 
+`cd DS4CG-Automatic-Georeferencing`
+
 `py -m venv env`
 
 `.\env\Scripts\activate`

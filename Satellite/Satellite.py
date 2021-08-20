@@ -18,7 +18,7 @@ if __name__ == '__main__':
 
     # get command line arguments
     try:
-        refCode = sys.argv[1]
+        code = sys.argv[1]
     except IndexError as e:
         logging.error('Please provide a referenced image (argument 1) and at least one unreferenced image '
                       '(arguments 2 and futher).')

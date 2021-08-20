@@ -23,8 +23,13 @@ if __name__ == '__main__':
     refFn = None
 
     # get command line arguments
-    refCode = sys.argv[1]
-    ovCodes = sys.argv[2:]
+    try:
+        refCode = sys.argv[1]
+        ovCodes = sys.argv[2:]
+    except IndexError as e:
+        logging.error('Please provide a referenced image (argument 1) and at least one unreferenced image '
+                      '(arguments 2 and futher).')
+        sys.exit(1)
 
     mac = helper.read_yaml('config.yaml')['MACCONNELL']
     if mac['USE'] is True:
@@ -49,7 +54,6 @@ if __name__ == '__main__':
         targetEPSG = '26986'
         # set spatial reference
         sr.ImportFromEPSG(26986)
-        logging.info('Spatial reference set to EPSG:26986.')
 
         # get filenames associated with each of the overlapping MacConnell images
         for code in ovCodes:
@@ -97,6 +101,7 @@ if __name__ == '__main__':
             sys.exit(1)
         else:
             logging.info(f'Found referenced image {refFn}.')
+        logging.info('Spatial reference set to EPSG:26986.')
 
     else:
         logging.info('Using config for other (not MacConnell) dataset.')
@@ -108,7 +113,6 @@ if __name__ == '__main__':
         # set spatial reference
         targetEPSG = inp['EPSG']
         sr.ImportFromEPSG(targetEPSG)
-        logging.info(f'Spatial reference set to EPSG:{inp["EPSG"]}.')
         maxGCPs = inp['MAX_GCPS']
         DPI = inp['DPI']
         ransacThresh = inp['RANSAC_THRESHOLD']
@@ -133,12 +137,20 @@ if __name__ == '__main__':
 
             filenames.append((path, output_fn_temp, GCP_fname))
 
+        logging.info(f'Spatial reference set to EPSG:{inp["EPSG"]}.')
+
     # read original referenced image
     refOG = cv2.imread(refFn)
+    refGD = gdal.Open(refFn)
     # store scaling ratio
     ref_resize = [x_scaled / refOG.shape[0], y_scaled / refOG.shape[1]]
     # resize the images
     ref = cv2.resize(refOG, (x_scaled, y_scaled))
+
+    if osr.SpatialReference(wkt=refGD.GetProjection()).GetAttrValue('AUTHORITY', 1) is None:
+        logging.error(f'CRS from referenced image {refFn} could not be found. GCPs cannot be found from an '
+                      f'image with no available CRS.')
+        sys.exit(1)
 
     for orig_fn, output_fn_temp, GCP_fname in filenames:
         with open(GCP_fname, 'w') as f:
@@ -205,7 +217,6 @@ if __name__ == '__main__':
             # write all the selected matches and apply them to the unreferenced image
             gcps = []
             logging.info(f'Writing GCPs to {GCP_fname} and applying them to {output_fn_temp.replace("_temp", "")}...')
-            refGD = gdal.Open(refFn)
             for i in range(len(distributed_matches)):
                 # scaling the pixel coordinates back to original sizes
                 scaled_src = [k / j for k, j in zip(src_pts[i][0], ref_resize)]
@@ -213,11 +224,6 @@ if __name__ == '__main__':
 
                 # converting the pixel to coordinates in corresponding systems
                 CRSXRef, CRSYRef = helper.pixel2coord(refGD, scaled_src[0], scaled_src[1])
-
-                if osr.SpatialReference(wkt=refGD.GetProjection()).GetAttrValue('AUTHORITY', 1) is None:
-                    logging.error(f'CRS from referenced image {refFn} could not be found. GCPs cannot be found from an '
-                                  f'image with no available CRS.')
-                    sys.exit(1)
 
                 # add the GCP
                 gcps.append(gdal.GCP(CRSXRef, CRSYRef, 0, int(scaled_dst[0]), int(scaled_dst[1])))

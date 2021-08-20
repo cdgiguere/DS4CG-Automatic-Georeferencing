@@ -17,12 +17,16 @@ if __name__ == '__main__':
     macCoords = pd.read_csv('Data/MacConnellCoords.csv')
 
     # get command line arguments
-    code = sys.argv[1]
+    try:
+        refCode = sys.argv[1]
+    except IndexError as e:
+        logging.error('Please provide a referenced image (argument 1) and at least one unreferenced image '
+                      '(arguments 2 and futher).')
+        sys.exit(1)
 
     # Set spatial reference:
     sr = osr.SpatialReference()
     sr.ImportFromEPSG(26986)
-    logging.info('Spatial reference set to EPSG:26986.')
     # define the new image scale
     x_scaled = 600
     y_scaled = 600
@@ -112,6 +116,8 @@ if __name__ == '__main__':
             tiles[count] = os.path.join(satPath, file_name, file.replace('.zip', '.jp2'))
             count += 1
         logging.info('Download complete.')
+
+    logging.info('Spatial reference set to EPSG:26986.')
 
     # dividing the image to 9 parts
     list_cv = helper.stitched_outputs(orig_fn)
